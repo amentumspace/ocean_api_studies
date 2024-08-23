@@ -25,37 +25,64 @@ headers = {'API-Key': key}
 variable = "so"
 dt = datetime(2024, 8, 21)
 
-# Firstly salinity map at shallow depth
-depth = 0 # m 
+def plot_salinity_at_depth(depth):
 
-# construct param list for the API calls 
-# read API docs for valid ones https://www.amentum.io/ocean_docs#tag/nemo/operation/app.api_nemo.endpoints.NEMO_Phys.point
+    # construct param list for the API calls 
+    # read API docs for valid ones https://www.amentum.io/ocean_docs#tag/nemo/operation/app.api_nemo.endpoints.NEMO_Phys.point
+    param_list = [
+        dict(
+            latitude = lat,
+            longitude = lon, 
+            depth = depth,
+            variable = variable, 
+            year = dt.year,
+            month = dt.month,
+            day = dt.day
+        )
+        for (lat, lon) in zip(lats_f, lons_f)
+    ]
+
+    # Send it! Bombard API with requests in an asyncronous fashion 
+    # (order maintained by the package, automagically cached)
+    responses_json = async_api_caller.run(
+        url, headers, param_list
+    )
+
+    salinities = [r['value'] for r in responses_json]
+
+    salinities = np.reshape(np.array(salinities), lats_g.shape).astype(float)
+
+    # over land points will be None 
+    masked_salinities = ma.masked_invalid(salinities)
+
+    map_plotter.plot(lons_g, lats_g, masked_salinities,  
+                    units="PSU", img_name=f"salinity_{depth}.png", 
+                    save=True)
+
+# maps at these depths in metres
+[plot_salinity_at_depth(d) for d in [0, 200, 400]]
+
+# generating a relief map of bathymetry using hte gebco API endpoint
+
 param_list = [
     dict(
         latitude = lat,
         longitude = lon, 
-        depth = depth,
-        variable = variable, 
-        year = dt.year,
-        month = dt.month,
-        day = dt.day
     )
     for (lat, lon) in zip(lats_f, lons_f)
 ]
 
-# Send it! Bombard API with requests in an asyncronous fashion 
-# (order maintained by the package, automagically cached)
+url = "https://ocean.amentum.io/gebco"
+
 responses_json = async_api_caller.run(
     url, headers, param_list
 )
 
-salinities = [r['value'] for r in responses_json]
+# depth is negative elevation
+depths = [-float(r['elevation']['value']) for r in responses_json]
 
-salinities = np.reshape(np.array(salinities), lats_g.shape).astype(float)
+depths = np.reshape(np.array(depths), lats_g.shape).astype(float)
 
-# over land points will be None 
-masked_salinities = ma.masked_invalid(salinities)
-
-map_plotter.plot(lons_g, lats_g, masked_salinities,  
-                 units="PSU", img_name=f"salinity_{depth}.png", 
-                 save=True)
+map_plotter.plot(lons_g, lats_g, depths,  
+                 units="metres", img_name="bathymetry.png", 
+                 save=True, use_log_scale=True)
