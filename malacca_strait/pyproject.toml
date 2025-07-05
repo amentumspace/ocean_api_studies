@@ -8,6 +8,7 @@ dependencies = [
     "async-api-caller",
     "cartopy>=0.24.1",
     "map-plotter",
+    "nest-asyncio>=1.6.0",
     "numpy>=2.3.1",
     "plotly>=6.2.0",
     "streamlit>=1.46.1",
@@ -15,5 +16,5 @@ dependencies = [
 ]
 
 [tool.uv.sources]
-async-api-caller = { git = "https://github.com/amentumspace/async_api_caller.git" }
 map-plotter = { git = "https://github.com/amentumspace/map_plotter" }
+async-api-caller = { git = "https://github.com/amentumspace/async_api_caller.git" }

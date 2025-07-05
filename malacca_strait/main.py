@@ -5,14 +5,11 @@ import numpy as np
 import numpy.ma as ma
 import os
 
+
 url = "https://ocean.amentum.io/gebco"
 key = os.getenv("API_KEY")
 if key is None: ValueError("set env var API_KEY")
 headers = {'API-Key': key}
-
-
-def get_data():
-    return asyncio.run(fetch_data())  # Use only if you're not already in an event loop
 
 
 def main():
@@ -35,8 +32,8 @@ def main():
     # Bounding box input
     lon_min = st.number_input("Min Longitude", value=99.5)
     lon_max = st.number_input("Max Longitude", value=105.5)
-    lat_min = st.number_input("Min Latitude", value=6.5)
-    lat_max = st.number_input("Max Latitude", value=1)
+    lat_min = st.number_input("Min Latitude", value=1)
+    lat_max = st.number_input("Max Latitude", value=6.5)
 
     # Figure 1 salinity maps at different depths 
     res = 0.1 # deg (change to 0.1 deg)
@@ -54,6 +51,7 @@ def main():
         )
         for (lat, lon) in zip(lats_f, lons_f)
     ]
+    
     if st.button("Start mapping!"):
         with st.spinner("Fetching data..."):    
 
@@ -62,7 +60,6 @@ def main():
             responses_json = async_api_caller.run(
                 url, headers, param_list
             )
-            breakpoint()
 
             depths = [-r['elevation']['value'] for r in responses_json]
 
@@ -71,9 +68,11 @@ def main():
             # over land points will be None 
             masked_depths = ma.masked_invalid(depths)
 
-            map_plotter.plot(lons_g, lats_g, masked_depths,  
+            cont = map_plotter.plot(lons_g, lats_g, masked_depths,  
                             units="m", img_name=f"bathy.png", 
-                            save=True)
+                            save=True, zlims=[-100, 0])
+            st.pyplot(cont.figure)
+
 
 
 if __name__ == "__main__":
