@@ -8,6 +8,7 @@ dependencies = [
     "async-api-caller",
     "map-plotter",
     "streamlit>=1.46.1",
+    "streamlit-image-comparison>=0.0.4",
 ]
 
 [tool.uv.sources]
