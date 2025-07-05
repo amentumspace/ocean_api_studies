@@ -1,0 +1,14 @@
+[project]
+name = "malacca-strait"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "async-api-caller",
+    "map-plotter",
+]
+
+[tool.uv.sources]
+async-api-caller = { git = "https://github.com/amentumspace/async_api_caller.git" }
+map-plotter = { git = "https://github.com/amentumspace/map_plotter" }
