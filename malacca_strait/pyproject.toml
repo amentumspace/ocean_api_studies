@@ -7,6 +7,7 @@ requires-python = ">=3.13"
 dependencies = [
     "async-api-caller",
     "map-plotter",
+    "streamlit>=1.46.1",
 ]
 
 [tool.uv.sources]
