@@ -6,7 +6,10 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "async-api-caller",
+    "cartopy>=0.24.1",
     "map-plotter",
+    "numpy>=2.3.1",
+    "plotly>=6.2.0",
     "streamlit>=1.46.1",
     "streamlit-image-comparison>=0.0.4",
 ]
