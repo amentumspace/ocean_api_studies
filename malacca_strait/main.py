@@ -4,6 +4,7 @@ import streamlit as st
 import numpy as np
 import numpy.ma as ma
 import os
+from datetime import datetime
 
 
 url = "https://ocean.amentum.io/gebco"
@@ -34,6 +35,12 @@ def main():
     lon_max = st.number_input("Max Longitude", value=105.5)
     lat_min = st.number_input("Min Latitude", value=1)
     lat_max = st.number_input("Max Latitude", value=6.5)
+
+    dt = st.slider(
+        "Date of interest",
+        value=datetime(2025, 7, 9),
+        format="DD/MM/YY",
+    )
 
     # Figure 1 salinity maps at different depths 
     res = 0.1 # deg (change to 0.1 deg)
@@ -72,6 +79,38 @@ def main():
                             units="m", img_name=f"bathy.png", 
                             save=True, zlims=[-100, 0])
             st.pyplot(cont.figure)
+
+            # now plot salinity
+            def get_param_list(variable):
+
+                return [
+                    dict(
+                        latitude = lat,
+                        longitude = lon, 
+                        depth = 0, # surface for now
+                        variable = variable, 
+                        year = dt.year,
+                        month = dt.month,
+                        day = dt.day
+                    )
+                    for (lat, lon) in zip(lats_f, lons_f)
+                ]
+            
+            param_list = get_param_list('so')
+
+            responses_json = async_api_caller.run(
+                url, headers, param_list
+            )
+            breakpoint()
+
+            values = [r['value'] for r in responses_json]
+
+            values = np.reshape(np.array(values), lats_g.shape).astype(float)
+            cont = map_plotter.plot(lons_g, lats_g, values,  
+                            units="m", img_name=f"bathy.png", 
+                            save=True, zlims=[-100, 0])
+            st.pyplot(cont.figure)
+
 
 
 

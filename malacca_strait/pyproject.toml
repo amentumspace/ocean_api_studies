@@ -16,5 +16,5 @@ dependencies = [
 ]
 
 [tool.uv.sources]
-map-plotter = { git = "https://github.com/amentumspace/map_plotter" }
 async-api-caller = { git = "https://github.com/amentumspace/async_api_caller.git" }
+map-plotter = { git = "https://github.com/amentumspace/map_plotter" }
