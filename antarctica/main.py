@@ -17,8 +17,8 @@ headers = {'API-Key': API_KEY}
 
 res = 1 # degree
 
-lat_min, lon_min = -48.747100548604756, 79.95050415729786
-lat_max, lon_max = -32.28616231410426, 174.39351169674035
+lat_min, lon_min = -50.5, 125
+lat_max, lon_max = -32.5, 175
 
 
 def main():
